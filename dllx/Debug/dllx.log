@@ -1,0 +1,6 @@
+﻿  pch.cpp
+  dllmain.cpp
+C:\Users\Administrator\source\repos\xcore\dllx\dllmain.cpp(3,10): warning C4067: 预处理器指令后有意外标记 - 应输入换行符
+C:\Users\Administrator\source\repos\xcore\dllx\dllmain.cpp(4,10): warning C4067: 预处理器指令后有意外标记 - 应输入换行符
+    正在创建库 C:\Users\Administrator\source\repos\xcore\Debug\dllx.lib 和对象 C:\Users\Administrator\source\repos\xcore\Debug\dllx.exp
+  dllx.vcxproj -> C:\Users\Administrator\source\repos\xcore\Debug\dllx.dll
