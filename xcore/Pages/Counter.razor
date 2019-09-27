@@ -1,16 +1,119 @@
 ﻿@page "/counter"
+@using xcore.Area.Test.Service;
+@using System.Linq;
+@using Newtonsoft.Json;
+@inject DllService dllService;
+@inject ActivityWangService activityService;
+@using System.IO;
 
-<h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
 
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<button @onclick="parseAllHtml">载入数据</button>
+<button @onclick="groupKeywords">分组</button>
 
-@code {
-    int currentCount = 0;
 
-    void IncrementCount()
+
+<div>
+    <input @bind="start" placeholder="起步" />
+    <input @bind="take" placeholder="数据数量" />
+</div>
+
+@if (groups == null)
+{
+    <h4>loading </h4>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>关键词</th>
+                <th>作品数量</th>
+                <th>下载数量</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in groups)
+            {
+            <tr>
+                <td>@a.keyword</td>
+                <td>@a.workNum</td>
+                <td>@a.downloadNum</td>
+
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code{
+    private int start { get; set; }
+    private int take { get; set; }
+    private List<CommonActivity> activitys { get; set; }
+    private List<CommonActivity> displayActivitys { get; set; }
+    private string firstActivityPage { get; set; }
+    private string name { get; set; }
+
+    public void dllInject()
     {
-        currentCount++;
+
+        this.dllService.injectDll();
+
     }
+
+    public void getData()
+    {
+        this.activityService.getAllActivity();
+    }
+
+    public void parseSingleParse()
+    {
+        this.firstActivityPage = this.activityService.getSingleActivityHtmlText();
+        var content = this.activityService.parseActivityHtml(this.firstActivityPage);
+        Console.WriteLine(this.firstActivityPage);
+        Console.WriteLine(content);
+    }
+    public void parseAllHtml()
+    {
+        this.activitys = this.activityService.parseJsonFile();
+    }
+
+    public void showActivity()
+    {
+        this.displayActivitys = (from a in this.activitys select a).ToList().Skip(this.start).Take(this.take).ToList();
+    }
+
+    public List<KeywordGroup> groups { get; set; } = new List<KeywordGroup>();
+    public void groupKeywords()
+    {
+        Console.WriteLine("keywords");
+        foreach(var a in this.activitys)
+        {
+            var keywords = a.tags.Trim().Replace(",", "").Split(" ");
+            foreach(var keyword in keywords)
+            {
+                var count = (from g in this.groups where keyword==g.keyword select g).Count();
+                if (count == 0)
+                {
+                    this.groups.Add(new KeywordGroup { keyword = keyword,workNum=0,downloadNum=0 });
+                }
+                else
+                {
+                    var g=  this.groups.Find(g => g.keyword == keyword);
+                    int.TryParse(a.downloadNum, out int downloadNum);
+                    g.workNum += 1;
+                    g.downloadNum += downloadNum;
+                }
+
+            }
+
+        }
+        this.groups = (from g in this.groups orderby g.downloadNum descending, g.workNum descending select g).ToList();
+        Console.WriteLine(this.groups.Count);
+
+    }
+
+
 }

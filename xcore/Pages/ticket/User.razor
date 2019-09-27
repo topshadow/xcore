@@ -1,0 +1,116 @@
+﻿@page "/ticket/user/{id:int}"
+
+@using xcore.Area.Test.Service;
+@using System.Linq;
+@using Newtonsoft.Json;
+@inject DllService dllService;
+@inject ActivityWangService activityService;
+@inject xcore.Model.Db  db;
+@using System.IO;
+<h1>Hello, world!</h1>
+
+Welcome to your new app.
+<button @onclick="dllInject"> 提交</button>
+@firstActivityPage
+<button @onclick="parseSingleParse">解析一个页面</button>
+<button @onclick="parseAllHtml">解析所有页面</button>
+<button @onclick="showActivity">显示100跳</button>
+<button @onclick="getJson">写入</button>
+
+<h1>
+    @if (user != null)
+    {
+        @user.nickname
+    }
+</h1>
+
+
+
+@if (displayActivitys == null)
+{
+    <h4>loading </h4>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>标题</th>
+                <th>标签</th>
+                <th>价格</th>
+                <th>下载数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in displayActivitys)
+            {
+                <tr>
+                    <td>@a.id</td>
+                    <td>@a.title</td>
+                    <td>@a.tags</td>
+                    <td>@a.price</td>
+                    <td>@a.downloadNum</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code{
+
+    private List<CommonActivity> activitys { get; set; }
+    private List<CommonActivity> displayActivitys { get; set; }
+    private string firstActivityPage { get; set; }
+    private string name { get; set; }
+    private xcore.Model.User user { get; set; }
+    [Parameter]
+    public int id { get; set; }
+
+    public void dllInject()
+    {
+
+        this.dllService.injectDll();
+
+    }
+    public void parseSingleParse()
+    {
+        this.firstActivityPage = this.activityService.getSingleActivityHtmlText();
+        var content = this.activityService.parseActivityHtml(this.firstActivityPage);
+        Console.WriteLine(this.firstActivityPage);
+        Console.WriteLine(content);
+    }
+    public void parseAllHtml()
+    {
+        //this.activitys = this.activityService.getAllActivity();
+    }
+
+    public void showActivity()
+    {
+        this.displayActivitys = (from a in this.activitys select a).ToList().Take(100).ToList();
+    }
+    public void getJson()
+    {
+        var str = JsonConvert.SerializeObject(this.activitys);
+        using (var fileStream = File.Create("E:/workspace/activity.json"))
+        {
+
+        }
+        File.WriteAllText("E:/workspace/activity.json", str);
+
+
+    }
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        this.user = this.db.users.Find(this.id);
+
+        Console.WriteLine(this.user);
+        Console.WriteLine(this.user == null);
+
+
+
+    }
+}

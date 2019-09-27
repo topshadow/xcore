@@ -4,17 +4,6 @@
     "E:\\workspace\\csharp\\xcore\\xcore\\xcore.csproj": {}
   },
   "projects": {
-    "E:\\workspace\\csharp\\xcore\\dllx\\dllx.vcxproj": {
-      "version": "1.0.0",
-      "restore": {
-        "projectUniqueName": "E:\\workspace\\csharp\\xcore\\dllx\\dllx.vcxproj",
-        "projectName": "dllx",
-        "projectPath": "E:\\workspace\\csharp\\xcore\\dllx\\dllx.vcxproj"
-      },
-      "frameworks": {
-        "native": {}
-      }
-    },
     "E:\\workspace\\csharp\\xcore\\xcore\\xcore.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -37,11 +26,7 @@
         },
         "frameworks": {
           "netcoreapp3.0": {
-            "projectReferences": {
-              "E:\\workspace\\csharp\\xcore\\dllx\\dllx.vcxproj": {
-                "projectPath": "E:\\workspace\\csharp\\xcore\\dllx\\dllx.vcxproj"
-              }
-            }
+            "projectReferences": {}
           }
         },
         "warningProperties": {
@@ -52,6 +37,28 @@
       },
       "frameworks": {
         "netcoreapp3.0": {
+          "dependencies": {
+            "HtmlAgilityPack": {
+              "target": "Package",
+              "version": "[1.11.12, )"
+            },
+            "HtmlParser": {
+              "target": "Package",
+              "version": "[0.9.0, )"
+            },
+            "MariGold.HtmlParser": {
+              "target": "Package",
+              "version": "[1.1.0, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[12.0.2, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[2.2.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

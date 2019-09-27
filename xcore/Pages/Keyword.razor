@@ -1,0 +1,131 @@
+@page "/keywords"
+@using xcore.Area.Test.Service;
+@using System.Linq;
+@using Newtonsoft.Json;
+@inject DllService dllService;
+@inject ActivityWangService activityService;
+@using System.IO;
+
+
+<div>
+    <button @onclick="getData">重新载入数据</button>
+</div>
+
+<button @onclick="parseAllHtml">分组</button>
+<button @onclick="showActivity">显示数据</button>
+<button @onclick="priceHigh">s</button>
+<button @onclick="timeDesc">时间降序</button>
+<button @onclick="timeAsc">时间升序</button>
+
+
+
+<div>
+    <input @bind="start" placeholder="起步" />
+    <input @bind="take" placeholder="数据数量" />
+</div>
+
+@if (displayActivitys == null)
+{
+    <h4>loading </h4>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>标题</th>
+                <th style="    max-width: 200px;
+    overflow-x: hidden;
+    display: block;">标签</th>
+                <th>价格</th>
+                <th>阅读数量</th>
+                <th>下载数量</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var a in displayActivitys)
+            {
+                <tr>
+                    <td>@a.id</td>
+
+                    <td><a href="@a.url" target="_blank"> @a.title</a></td>
+                    <td style="    max-width: 200px;
+    overflow-x: hidden;
+    display: block;">
+                        @a.tags
+</td>
+<td>@a.price</td>
+<td>@a.viewNum</td>
+<td>@a.downloadNum</td>
+<td>@a.publishAt</td>
+</tr>
+}
+        </tbody>
+    </table>
+}
+
+
+@code{
+    private int start { get; set; }
+    private int take { get; set; }
+    private List<CommonActivity> activitys { get; set; }
+    private List<CommonActivity> displayActivitys { get; set; }
+    private string firstActivityPage { get; set; }
+    private string name { get; set; }
+
+    public void dllInject()
+    {
+
+        this.dllService.injectDll();
+
+    }
+
+    public void getData()
+    {
+        this.activityService.getAllActivity();
+    }
+
+    public void parseSingleParse()
+    {
+        this.firstActivityPage = this.activityService.getSingleActivityHtmlText();
+        var content = this.activityService.parseActivityHtml(this.firstActivityPage);
+        Console.WriteLine(this.firstActivityPage);
+        Console.WriteLine(content);
+    }
+    public void parseAllHtml()
+    {
+        this.activitys = this.activityService.parseJsonFile();
+    }
+
+    public void showActivity()
+    {
+        this.displayActivitys = (from a in this.activitys select a).ToList().Skip(this.start).Take(this.take).ToList();
+    }
+    public void getJson()
+    {
+        var str = JsonConvert.SerializeObject(this.activitys);
+        using (var fileStream = File.Create("E:/workspace/activity.json"))
+        {
+
+        }
+        File.WriteAllText("E:/workspace/activity.json", str);
+
+
+    }
+    public void priceHigh()
+    {
+        this.displayActivitys = (from a in this.activitys orderby a.price descending, a.downloadNum descending, a.viewNum descending select a).ToList();
+    }
+    public void timeDesc()
+    {
+        this.displayActivitys = (from a in this.activitys orderby a.publishAt descending select a).ToList();
+    }
+    public void timeAsc()
+    {
+        this.displayActivitys = (from a in this.activitys orderby a.publishAt ascending select a).ToList();
+    }
+
+
+}
