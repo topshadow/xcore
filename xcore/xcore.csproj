@@ -16,7 +16,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.11.12" />
     <PackageReference Include="HtmlParser" Version="0.9.0" />
     <PackageReference Include="MariGold.HtmlParser" Version="1.1.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0" />
   </ItemGroup>
 
